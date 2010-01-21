@@ -1,6 +1,6 @@
 require 'rubygems'
 
-Gem::manage_gems
+Gem.manage_gems if Gem::RubyGemsVersion.to_f < 1.3
 
 require 'rake/rdoctask'
 require 'rake/packagetask'
