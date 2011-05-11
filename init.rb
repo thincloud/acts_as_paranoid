@@ -29,7 +29,7 @@ class << ActiveRecord::Base
 
   def has_one_with_deleted(association_id, options = {})
     with_deleted = options.delete :with_deleted
-    returning has_one_without_deleted(association_id, options) do
+    has_one_without_deleted(association_id, options).tap do
       if with_deleted
         reflection = reflect_on_association(association_id)
         association_accessor_methods(reflection,            Caboose::Acts::HasOneWithDeletedAssociation)
