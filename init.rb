@@ -1,7 +1,7 @@
 class << ActiveRecord::Base
   def belongs_to_with_deleted(association_id, options = {})
     with_deleted = options.delete :with_deleted
-    returning belongs_to_without_deleted(association_id, options) do
+    belongs_to_without_deleted(association_id, options).tap do
       if with_deleted and options[:polymorphic]
         reflection = reflect_on_association(association_id)
         association_accessor_methods(reflection,            Caboose::Acts::BelongsToWithDeletedPolymorphicAssociation)
@@ -15,10 +15,10 @@ class << ActiveRecord::Base
       end
     end
   end
-  
+
   def has_many_without_deleted(association_id, options = {}, &extension)
     with_deleted = options.delete :with_deleted
-    returning has_many_with_deleted(association_id, options, &extension) do
+    has_many_with_deleted(association_id, options, &extension).tap do
       if options[:through] && !with_deleted
         reflection = reflect_on_association(association_id)
         collection_reader_method(reflection, Caboose::Acts::HasManyThroughWithoutDeletedAssociation)
@@ -26,10 +26,10 @@ class << ActiveRecord::Base
       end
     end
   end
-  
+
   def has_one_with_deleted(association_id, options = {})
     with_deleted = options.delete :with_deleted
-    returning has_one_without_deleted(association_id, options) do
+    has_one_without_deleted(association_id, options).tap do
       if with_deleted
         reflection = reflect_on_association(association_id)
         association_accessor_methods(reflection,            Caboose::Acts::HasOneWithDeletedAssociation)
@@ -37,8 +37,8 @@ class << ActiveRecord::Base
         association_constructor_method(:create, reflection, Caboose::Acts::HasOneWithDeletedAssociation)
       end
     end
-  end 
-  
+  end
+
   alias_method_chain :has_one, :deleted
   alias_method_chain :belongs_to, :deleted
   alias_method :has_many_with_deleted, :has_many
